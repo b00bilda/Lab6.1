@@ -23,15 +23,15 @@ public class Client {
     String filePath = System.getenv("MY_FILE_PATH");
     private File file;
     BufferedReader consoleReader;
-    //Gson gson;
+
 
 
     public void initialize(String host, int port) throws IOException {
         try {
-            InetSocketAddress address = new InetSocketAddress(host, port); // создаем адрес сокета (IP-адрес и порт)
+            InetSocketAddress address = new InetSocketAddress(host, port);
             socket = SocketChannel.open();
             socket.connect(address);
-            socket.configureBlocking(false); // неблокирующий режим ввода-вывода
+            socket.configureBlocking(false);
         } catch (RuntimeException e) {
             System.out.println("Server " + host + " on port " + port + " is not available");
             System.exit(1);
@@ -118,59 +118,4 @@ public class Client {
             System.out.println("Ошибка подключения к серверу: " + e.getMessage());
         }
     }
-
-
-
-    public static Request getAnswer() throws IOException {
-        Selector selector = Selector.open();
-        socket.register(selector, SelectionKey.OP_READ); // регистрируем интерес к чтению
-
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
-        StringBuilder messageBuilder = new StringBuilder();
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new JsonLocalDate())
-                .create();
-
-        while (true) {
-            // ждём, пока что-то будет доступно
-            if (selector.select(5000) == 0) {
-                System.out.println("Нет ответа от сервера...");
-                continue;
-            }
-
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
-
-            while (keyIterator.hasNext()) {
-                SelectionKey key = keyIterator.next();
-
-                if (key.isReadable()) {
-                    SocketChannel channel = (SocketChannel) key.channel();
-                    buffer.clear();
-
-                    int bytesRead = channel.read(buffer);
-                    if (bytesRead == -1) {
-                        channel.close();
-                        throw new IOException("Сервер закрыл соединение");
-                    }
-
-                    buffer.flip();
-                    String part = StandardCharsets.UTF_8.decode(buffer).toString();
-                    messageBuilder.append(part);
-
-                    // Простейшая проверка окончания сообщения (например, по символу \n)
-                    if (part.contains("\n")) {
-                        selector.close();
-                        String json = messageBuilder.toString().trim();
-                        System.out.println("Получено от сервера: " + json);
-                        return gson.fromJson(json, Request.class);
-                    }
-                }
-
-                keyIterator.remove();
-            }
-        }
-    }
-
 }
