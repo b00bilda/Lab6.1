@@ -30,10 +30,9 @@ public class FileManager {
     private static Hashtable<Long, Dragon> jsonReader(String fileName) {
         File file = new File(fileName);
         Path path = file.toPath();
-        System.out.println("🔍 Попытка открыть файл: " + fileName);
 
         if (fileName == null) {
-            System.out.println("Ошибка: Переменная окружения MY_FILE_PATH не задана!");
+            System.out.println("Environmental variable doesn't exist");
         } else if (Files.notExists(path)) {
             throw new RuntimeException("");
         } else if (!Files.isRegularFile(path)) {
@@ -64,7 +63,7 @@ public class FileManager {
 
         } catch (IOException e) {
             System.err.println("Something wrong with reading a file");
-            throw new RuntimeException("Не удалось прочитать файл JSON", e);
+            throw new RuntimeException("Can't open JSON file", e);
         }
         return hashtable;
     }
@@ -79,7 +78,7 @@ public class FileManager {
         String fileName = System.getenv("MY_FILE_PATH");
 
         if (fileName == null) {
-            System.out.println("Ошибка: Переменная окружения MY_FILE_PATH не задана!");
+            System.out.println("Environmental variable doesn't exist");
         }
 
         Gson gson = new GsonBuilder()
