@@ -92,7 +92,7 @@ public class Client {
                     System.out.println(response.getMessage());
 
                 } catch (IOException e) {
-                    System.out.println("Ошибка подключения к серверу: " + e.getMessage());
+                    System.out.println("Server connection error " + e.getMessage());
                 }
             }
         }

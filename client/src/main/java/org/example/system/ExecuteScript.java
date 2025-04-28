@@ -27,28 +27,24 @@ public class ExecuteScript {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
             String line;
-            // String[] dragonData = new String[9];
             while ((line = br.readLine()) != null) {
                 String[] parts = line.trim().split("\\s+");
 
                 if (parts[0].equals("insert")) {
                     try {
-                        // Заполняем массив данных для дракона
-                        String[] dragonData = new String[9]; // Убедитесь, что длина массива совпадает с количеством элементов
+                        String[] dragonData = new String[9];
                         for (int n = 0; n < 9; n++) {
-                            dragonData[n] = parts[n + 1]; // Заполняем данные начиная с части 1 (skip "insert")
-                            System.out.println("dragonData[" + n + "]: " + dragonData[n]); // Печать значений данных
+                            dragonData[n] = parts[n + 1];
+                            System.out.println("dragonData[" + n + "]: " + dragonData[n]);
                         }
 
-                        // Печать информации о запросе перед отправкой
                         System.out.println("Sending dragon data: " + Arrays.toString(dragonData));
 
-                        // Создаем объект Dragon и отправляем запрос
                         Client.sendRequest(new Request("insert", new Dragon(dragonData), dragonData));
 
                     } catch (Exception e) {
                         System.out.println("Something wrong with dragon data: ");
-                        e.printStackTrace(); // Выводим подробности ошибки для диагностики
+                        e.printStackTrace();
                     }
                 } else if (line.contains("execute_script")) {
                     File anotherFile = new File(line.split(" ")[1]);
