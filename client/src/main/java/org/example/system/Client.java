@@ -68,7 +68,11 @@ public class Client {
                         dragon = dragonGenerator.createDragon();
                         break;
                     case "execute_script":
-                        ExecuteScript.execute(arguments[0]);
+                        if (arguments.length != 0) {
+                            ExecuteScript.execute(arguments[0]);
+                        } else {
+                            System.out.println("Something wrong with arguments. Write script file name");
+                        }
                         break;
                     default:
                         dragon = null;
